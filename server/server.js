@@ -13,9 +13,9 @@ const server = new ApolloServer({
   context: authMiddleware,
 });
 
-server.applyMiddleware({ app });
+server.applyMiddleware({ app }); 
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // if we're in production, serve client/build as static assets

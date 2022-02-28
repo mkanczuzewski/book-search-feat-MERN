@@ -1,13 +1,11 @@
 const jwt = require('jsonwebtoken');
 
-// set token secret and expiration date
 const secret = 'mysecretsshhhhh';
 const expiration = '2h';
 
 module.exports = {
-  // function for our authenticated routes
   authMiddleware: function ({ req }) {
-
+    // allows token to be sent via req.body, req.query, or headers
     let token = req.body.token || req.query.token || req.headers.authorization;
 
     // ["Bearer", "<tokenvalue>"]
@@ -26,7 +24,7 @@ module.exports = {
       console.log('Invalid token');
     }
 
-    next();
+    return req;
   },
   signToken: function ({ username, email, _id }) {
     const payload = { username, email, _id };

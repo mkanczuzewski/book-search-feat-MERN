@@ -1,4 +1,4 @@
-const { AuthErr, concatenateTypeDefs } = require('apollo-server-express');
+const { AuthenticationError } = require('apollo-server-express');
 const { User } = require('../models');
 const { signToken } = require('../utils/auth');
 
@@ -6,13 +6,12 @@ const resolvers = {
     Query: {
         me: async (parent, args, context) => {
             if (context.user) {
-                const userData = await User.findOne({ _id: context.user._id})
-                .select('-__v -password');
+                const userData = await User.findOne({ _id: context.user._id}).select('-__v -password');
 
                 return userData;
             }
 
-            throw new AuthErr('Not logged in')
+            throw new AuthenticationError('Not logged in')
         },
     },
 
@@ -26,11 +25,11 @@ const resolvers = {
         login: async (parent, { email, password }) => {
             const user = await User.findOne({ email });
             if (!user) {
-                throw new AuthErr("Wrong Login Information")
+                throw new AuthenticationError("Wrong Login Information")
             }
             const correctPass = await user.isCorrectPassword(password);
             if (!correctPass) {
-                throw new AuthErr("Wrong Login Information")
+                throw new AuthenticationError("Wrong Login Information")
             }
             const token = signToken(user)
             return { token, user };
@@ -45,7 +44,7 @@ const resolvers = {
                 );
                 return updatedUser
             }
-            throw new AuthErr('You are not logged in!');
+            throw new AuthenticationError('You are not logged in!');
         },
 
         removeBook: async (parrent, { bookId }, context) => {
@@ -57,7 +56,7 @@ const resolvers = {
                 );
                 return updatedUser
             }
-            throw new AuthErr('You are not logged in')
+            throw new AuthenticationError('You are not logged in')
         },
     },
 };
